@@ -1,0 +1,6 @@
+{
+  "Name": "RpaProjectCreator",
+  "ProjectType": "Process",
+  "Description": "Creates a standardized RPA project",
+  "MainFile": "Main.xaml"
+}
