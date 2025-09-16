@@ -1,34 +1,100 @@
-# ProjectCreator.RPA.Uipath.Process
+# ProcessStarter.RPA.Uipath.Process
 
-An automated UiPath RPA process that creates standardized RPA projects with GitHub repository setup, Orchestrator queue creation, and project structure initialization.
+A UiPath RPA process that provides an interactive dashboard for starting and managing RPA processes through a user-friendly form interface. This application allows users to select sessions, robots, and processes, then execute them with appropriate parameters.
 
-![alt text](Guide.png)
+![Process Starter Interface](Guide.png)
 
 ## Overview
 
-This process automates the creation of new RPA projects by:
-- Collecting project details through a user-friendly form interface
-- Setting up GitHub repositories with proper naming conventions
-- Creating Orchestrator queues for transaction processing
-- Generating project documentation using AI-powered content generation
-- Establishing standardized folder structures and configurations
+The Process Starter is a comprehensive UiPath application that serves as a centralized hub for managing and executing RPA processes. It provides an intuitive interface for users to:
+
+- Select available robot sessions
+- Choose robot users and processes
+- Configure process-specific parameters
+- Execute processes with proper validation
+- Monitor process execution status
 
 ## Features
 
-- **Interactive Form Interface**: User-friendly form for project input with validation
-- **GitHub Integration**: Automated repository creation and setup
-- **Orchestrator Integration**: Queue creation and folder management
-- **AI-Powered Documentation**: Automatic README and description generation
-- **Standardized Project Structure**: Consistent folder organization and naming
-- **Configuration Management**: Excel-based configuration system
-- **Error Handling**: Comprehensive error management and user feedback
+### 🎯 **Interactive Dashboard**
+- User-friendly form interface with modern UI design
+- Multi-step workflow for process selection and configuration
+- Real-time validation and error handling
+- Loading indicators and progress feedback
 
-## Packages and Dependencies
+### 🤖 **Session & Robot Management**
+- Dynamic session selection from available robot sessions
+- Robot user account management
+- Machine and host information display
+- Session validation and status checking
+
+### ⚙️ **Process Configuration**
+- Dynamic process list loading from Orchestrator
+- Process-specific parameter configuration
+- File upload capabilities for processes requiring input files
+- Date/time parameter selection for time-sensitive processes
+
+### 🔧 **Supported Process Types**
+- **AlayaCare Processes**: Time-based processes with date range selection
+- **Overhead Adjustment V1**: Excel file upload for invoice processing
+- **Overhead Adjustment V2**: Enhanced version with improved file handling
+- **Attended Automations**: Interactive processes requiring user input
+
+### 📊 **Configuration Management**
+- Excel-based configuration system (`Data/Config.xlsx`)
+- Company branding and customization
+- Wiki integration and support links
+- Error message management and display
+
+## Project Structure
+
+```
+ProcessStarter.RPA.Uipath.Process/
+├── Backend/                          # Backend process workflows
+│   ├── InOverheadAdjustmentV1.xaml
+│   └── InOverheadAdjustmentV2.xaml
+├── Data/                             # Configuration and data files
+│   └── Config.xlsx                   # Main configuration file
+├── Documentation/                    # Project documentation
+│   └── Simple.txt
+├── Forms/                           # User interface forms
+│   └── StartForm.uiform            # Main dashboard form
+├── Project/                         # Core workflow components
+│   ├── CreateFoldersIfNotExisting.xaml
+│   ├── GenerateAppSessions.xaml
+│   ├── GetAccessToken.xaml
+│   ├── GetListOfProcesses.xaml
+│   ├── GetListOfSession.xaml
+│   ├── GetListOfUsers.xaml
+│   ├── InitializeConfig.xaml
+│   ├── KillExcel.xaml
+│   ├── LoadAttendedAutomationList.xaml
+│   ├── LoadDashboradForm.xaml
+│   ├── LoadMachineToUserTable.xaml
+│   ├── QuickStartJob.xaml
+│   ├── SetPageName.xaml
+│   ├── StartJobOrchestratorAPI.xaml
+│   ├── UpdateConfigurationFile.xaml
+│   └── UploadFileToStorageBucketUsingOrchAPI.xaml
+├── Triggers/                        # Form event triggers
+│   ├── BackButtonTrigger.xaml
+│   ├── ChooseFileButtonTrigger.xaml
+│   ├── ExitButtonTrigger.xaml
+│   ├── NextButtonTrigger.xaml
+│   ├── SelectRobotTrigger.xaml
+│   └── StartProcessButtonTrigger.xaml
+├── Main.xaml                        # Main workflow entry point
+├── project.json                     # Project configuration
+├── entry-points.json               # Entry point definitions
+└── README.md                       # This file
+```
+
+## Dependencies
 
 ### UiPath Packages
 - **UiPath.Excel.Activities** `[3.1.1]` - Excel file operations and data handling
 - **UiPath.Form.Activities** `[25.4.3]` - Form creation and user interface components
-- **UiPath.IntegrationService.Activities** `[1.15.0]` - Integration service activities including AI/ML capabilities
+- **UiPath.IntegrationService.Activities** `[1.15.0]` - Integration service activities
 - **UiPath.System.Activities** `[25.6.1]` - Core system activities and utilities
 - **UiPath.WebAPI.Activities** `[2.0.0-preview]` - Web API integration capabilities
 
@@ -42,137 +108,155 @@ This process automates the creation of new RPA projects by:
   - Attended: false
   - Requires user interaction: true
 
-## Configuration Assets (Data/Config.xlsx)
+## Configuration
 
-The process uses an Excel configuration file (`Data/Config.xlsx`) with the following key settings:
+The application uses `Data/Config.xlsx` for configuration management. Key configuration areas include:
 
 ### Settings Sheet
-- **RpaLocalRepositoryFolder**: Local path for RPA project storage
-- **GithubOrganizationName**: GitHub organization name for repository creation
-- **GithubUsername**: GitHub username for API authentication
-- **GithubAccessToken**: Personal access token for GitHub API
-- **GithubCreateRepoApiUri**: GitHub API endpoint for repository creation
+- **Company Information**: Company name, creator details, wiki URL
+- **Orchestrator Settings**: Connection details and API endpoints
+- **Process Configuration**: Available processes and their parameters
+- **UI Customization**: Branding and display preferences
 
-## Process Workflow
+## Workflow Process
 
-### 1. Configuration Initialization (`InitializeConfig.xaml`)
-- Loads configuration from `Data/Config.xlsx`
-- Validates required settings and assets
+### 1. **Initialization** (`InitializeConfig.xaml`)
+- Loads configuration from Excel file
+- Validates required settings and connections
 - Prepares environment variables
 
-### 2. User Input Collection (`GetProjectDetails.xaml`)
-- Displays interactive form for project details
-- Validates project name (PascalCase, no forbidden words)
-- Collects orchestrator folder selection
-- Gathers project description and queue preferences
+### 2. **Dashboard Loading** (`LoadDashboradForm.xaml`)
+- Displays the main user interface
+- Loads available sessions, robots, and processes
+- Sets up form validation and event handlers
 
-### 3. Project Repository Setup (`InstantiateAndSetupProjectRepo.xaml`)
-- Creates local project folder structure
-- Generates project documentation using AI
-- Sets up initial project files and configurations
+### 3. **Session Selection**
+- User selects from available robot sessions
+- Displays session details (ID, machine name, host name)
+- Validates session availability and status
 
-### 4. Queue Creation (`CreateQueueIfNotExisting.xaml`)
-- Creates Orchestrator queue if requested
-- Configures queue properties and unique reference settings
-- Links queue to project for transaction processing
+### 4. **Robot & Process Selection**
+- User selects robot user account
+- Chooses from available processes
+- Validates process compatibility and requirements
 
-### 5. GitHub Repository Setup (`SetupGithubRepository.xaml`)
-- Creates GitHub repository via API
-- Initializes local git repository
-- Pushes project files to remote repository
+### 5. **Parameter Configuration**
+- Displays process-specific parameter forms
+- Handles file uploads for processes requiring input files
+- Validates parameter values and file formats
 
-### 6. Configuration Updates (`UpdateConfigurationFile.xaml`)
-- Updates project-specific configuration files
-- Sets up environment-specific settings
-- Configures connection strings and parameters
+### 6. **Process Execution** (`QuickStartJob.xaml`)
+- Starts the selected process with configured parameters
+- Monitors execution status
+- Handles errors and provides user feedback
 
 ## Form Interface Details
 
-### Input Fields
-- **Project Name**: PascalCase validation, no special characters or forbidden words
-- **Orchestrator Folder**: Dropdown selection from available folders
-- **Project Description**: Multi-line text area for process description
-- **GitHub Repository Name**: Auto-generated as `ProjectName.RPA.Uipath.Process`
-- **Queue Name**: Auto-generated as `ProjectNameQueue`
-- **Queue Creation Options**: Radio buttons for queue creation and unique reference settings
+### Main Dashboard Features
+- **Session Information Panel**: Displays current session details
+- **Process Selection**: Dropdown for available processes
+- **Parameter Configuration**: Dynamic forms based on selected process
+- **File Upload**: Support for Excel and other file types
+- **Action Buttons**: Start process, back navigation, exit
 
-### Validation Rules
-- Project names must start with capital letter
-- Only letters, numbers, and spaces allowed
-- Forbidden words: 'robot', 'automation', 'process', 'queue', 'asset', 'orchestrator', 'tenant'
-- Must not conflict with existing processes
+### Process-Specific Panels
+- **AlayaCare Panel**: Date range selection for time-based processes
+- **Overhead Adjustment V1**: Excel file upload for invoice processing
+- **Overhead Adjustment V2**: Enhanced file handling with validation
+- **Generic Process Panel**: Standard parameter collection
 
-## AI Integration
-
-The process uses UiPath Integration Service for AI-powered content generation:
-
-### AI Prompts
-- **Description Generation** (`PromptToGenerateDescription.txt`): Creates concise repository descriptions
-- **README Generation** (`PromptToGenerateReadme.txt`): Generates step-by-step process documentation
-- **PascalCase Validation** (`PromptToValidatePascalCase.txt`): Validates naming conventions
-
-## Expected Assets and Resources
-
-For each created project, the process expects:
-- **Credential Asset**: `{ProjectName}_SampleAppLoginCredential`
-- **Storage Bucket**: `{ProjectName}Bucket`
-- **Orchestrator Queue**: `{ProjectName}Queue` (if enabled)
-
-## Project Structure
-
-Created projects follow this standardized structure:
-```
-ProjectName/
-├── Data/
-│   └── Config.xlsx
-│   └── EmailTemplates/ - all mailing templates used by the process
-├── Documentation/ - all neccesary documentation goes here
-├── Framework/ - all Re-Framework standards go here
-├── Main.xaml
-├── project.json
-├── README.md
-├── Reusable_Components/ - should contain workflows that can be reused or shard among processes
-├── Project/ - should contain workflows strongly tied to related project
-└── Tests/ - for testing
-```
+### Validation & Error Handling
+- Real-time form validation
+- File format and size validation
+- Process compatibility checking
+- User-friendly error messages
+- Automatic cleanup on errors
 
 ## Getting Started
 
 ### Prerequisites
 - UiPath Studio 25.0.172.0 or later
 - Access to UiPath Orchestrator
-- GitHub account with personal access token
-- Excel file with proper configuration settings
+- Valid robot sessions and processes configured
+- Excel configuration file properly set up
 
 ### Setup Instructions
-1. Clone this repository
+1. Clone or download this repository
 2. Open the project in UiPath Studio
 3. Configure `Data/Config.xlsx` with your settings:
-   - GitHub credentials and organization
-   - Local repository folder path
+   - Company information and branding
    - Orchestrator connection details
-4. Ensure all required assets are available in Orchestrator
+   - Available processes and parameters
+4. Ensure all required processes are published to Orchestrator
 5. Run the process from Studio or publish to Orchestrator
 
 ### Configuration Requirements
-- Valid GitHub personal access token with repo creation permissions
-- Access to UiPath Orchestrator with folder management permissions
-- Local folder path with write permissions
-- Excel file with proper formatting and required fields
+- Valid Orchestrator access with process execution permissions
+- Robot sessions must be available and running
+- Processes must be published and accessible
+- Configuration file must contain all required settings
 
 ## Usage
 
-![Read here](https://github.com/MasterOfLogic1/ProjectCreator.RPA.Uipath.Process/blob/main/Documentation/HowToRun.pdf)
+### Starting the Application
+1. Run the `Main.xaml` workflow
+2. The dashboard form will load automatically
+3. Follow the step-by-step process selection
 
+### Process Selection Workflow
+1. **Select Session**: Choose from available robot sessions
+2. **Select Robot**: Choose the robot user account
+3. **Select Process**: Choose the process to execute
+4. **Configure Parameters**: Set process-specific parameters
+5. **Start Process**: Execute the process with selected parameters
+
+### Supported Process Types
+- **Time-based Processes**: Configure start/end dates and times
+- **File-based Processes**: Upload required input files
+- **Interactive Processes**: Provide user input parameters
+- **Automated Processes**: Execute with minimal user intervention
 
 ## Error Handling
 
-The process includes comprehensive error handling:
+The application includes comprehensive error handling:
 - Form validation with real-time feedback
-- Configuration validation before execution
-- API error handling for GitHub and Orchestrator operations
+- Process compatibility checking
+- File validation for uploads
+- Session and robot availability validation
 - User-friendly error messages and recovery options
 - Automatic cleanup on failure
+
+## Customization
+
+### UI Customization
+- Modify `Forms/StartForm.uiform` for interface changes
+- Update CSS styles in the form configuration
+- Customize branding and company information
+
+### Process Integration
+- Add new process types in the form configuration
+- Create new parameter panels for specific processes
+- Update process validation logic as needed
+
+### Configuration Management
+- Modify `Data/Config.xlsx` for settings changes
+- Add new configuration parameters as required
+- Update process lists and parameters
+
+## Troubleshooting
+
+### Common Issues
+1. **Session Not Available**: Ensure robot sessions are running and accessible
+2. **Process Not Found**: Verify processes are published to Orchestrator
+3. **File Upload Errors**: Check file format and size requirements
+4. **Configuration Errors**: Validate Excel configuration file format
+
+### Debug Steps
+1. Check Orchestrator connectivity
+2. Verify robot session status
+3. Validate process availability
+4. Review configuration file settings
+5. Check error messages in the application
 
 ## License
 
@@ -182,6 +266,19 @@ See `LICENSE` for details.
 
 For issues or questions:
 1. Check the configuration settings in `Data/Config.xlsx`
-2. Verify GitHub and Orchestrator permissions
-3. Review the job response messages for specific error details
-4. Ensure all required assets are properly configured
+2. Verify Orchestrator and robot session availability
+3. Review process requirements and parameters
+4. Check the application error messages for specific details
+
+## Contributing
+
+To contribute to this project:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+---
+
+**Note**: This application is designed for internal use and requires proper UiPath Orchestrator setup and robot session management.
